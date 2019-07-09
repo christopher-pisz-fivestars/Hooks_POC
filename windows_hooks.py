@@ -56,6 +56,8 @@ class WindowsHooksWrapper(object):
         self.thread = threading.Thread(target=self.thread_proc)
         self.window_to_publish_to = None
 
+        print "HookWrapper created on Id {}".format(threading.current_thread().ident)
+
     def __del__(self):
         self.stop()
 
@@ -226,7 +228,7 @@ class WindowsHooksWrapper(object):
         return not consume
 
     def thread_proc(self):
-        print "Thread started"
+        print "Thread started with Id {}".format(threading.current_thread().ident)
 
         # Evidently, the hook must be registered on the same thread with the windows msg pump or
         #     it will not work and no indication of error is seen

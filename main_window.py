@@ -1,3 +1,4 @@
+import threading
 import windows_hooks
 import wx
 
@@ -87,6 +88,7 @@ class MainPanel(wx.Panel):
         # TODO - I don't know if the concept is bad or if the text box is buggy
         #        but after a few clicks the text shows unexpected text and the
         #        app eventually freezes
+        print "Printing message on Thread with Id {}".format(threading.current_thread().ident)
         self.textbox.AppendText('MessageName: {}\n'.format(event.mouse_event.MessageName))
         self.textbox.AppendText('Message: {}\n'.format(event.mouse_event.Message))
         self.textbox.AppendText('Time: {}\n'.format(event.mouse_event.Time))
