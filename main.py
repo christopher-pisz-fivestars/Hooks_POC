@@ -12,7 +12,6 @@ def main():
     app = wx.App(False)
     frame = MainWindow(None, 'Hooks Testing', hook_wrapper)
 
-#   app.MainLoop()
     from twisted.internet import reactor
     reactor.registerWxApp(app)
     reactor.run()
