@@ -43,6 +43,8 @@ class MainWindow(wx.Frame):
 class MainPanel(wx.Panel):
     def __init__(self, parent, hook_manager):
         self.hook_manager = hook_manager
+        hook_manager.window_to_publish_to = self
+
         self.consuming = False
 
         wx.Panel.__init__(self, parent)
@@ -65,10 +67,6 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.on_click_task, self.button_task)
         self.Bind(wx.EVT_BUTTON, self.on_click_consume, self.button_consume)
 
-        hook_manager.window_to_publish_to = self
-        self.Connect(-1, -1, windows_hooks.WX_EVT_MOUSE_LEFT_BUTTON_DOWN_ID,
-                     self.on_hooked_left_button_down)
-
     def on_click_task(self, event):
         self.textbox.AppendText('Starting a long task...\n')
 
@@ -83,18 +81,18 @@ class MainPanel(wx.Panel):
             self.hook_manager.set_user_input_types_to_consume(InputTypes.NONE)
             self.consuming = False
 
-    def on_hooked_left_button_down(self, event):
-
-        # TODO - I don't know if the concept is bad or if the text box is buggy
-        #        but after a few clicks the text shows unexpected text and the
-        #        app eventually freezes
+    def print_to_text_box(self, hook_event_type, event):
         print "Printing message on Thread with Id {}".format(threading.current_thread().ident)
-        self.textbox.AppendText('MessageName: {}\n'.format(event.mouse_event.MessageName))
-        self.textbox.AppendText('Message: {}\n'.format(event.mouse_event.Message))
-        self.textbox.AppendText('Time: {}\n'.format(event.mouse_event.Time))
-        self.textbox.AppendText('Window: {}\n'.format(event.mouse_event.Window))
-        self.textbox.AppendText('WindowName: {}\n'.format(event.mouse_event.WindowName))
-        self.textbox.AppendText('Position: {}\n'.format(event.mouse_event.Position))
-        self.textbox.AppendText('Wheel: {}\n'.format(event.mouse_event.Wheel))
-        self.textbox.AppendText('Injected: {}\n'.format(event.mouse_event.Injected))
-        self.textbox.AppendText('---\n')
+        print 'Event type: {}'.format(hook_event_type)
+
+        tokens = hook_event_type.split('.')
+        if tokens[1] == 'mouse':
+            self.textbox.AppendText('MessageName: {}\n'.format(event.MessageName))
+            self.textbox.AppendText('Message: {}\n'.format(event.Message))
+            self.textbox.AppendText('Time: {}\n'.format(event.Time))
+            self.textbox.AppendText('Window: {}\n'.format(event.Window))
+            self.textbox.AppendText('WindowName: {}\n'.format(event.WindowName))
+            self.textbox.AppendText('Position: {}\n'.format(event.Position))
+            self.textbox.AppendText('Wheel: {}\n'.format(event.Wheel))
+            self.textbox.AppendText('Injected: {}\n'.format(event.Injected))
+            self.textbox.AppendText('---\n')
